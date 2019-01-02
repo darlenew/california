@@ -7,6 +7,7 @@ import calendar
 
 
 FIRSTWEEKDAY = 6
+WEEKEND = (5, 6) # day-of-week indices for saturday and sunday
 
 
 def calabazas(year):
@@ -30,17 +31,23 @@ def calabazas(year):
                 print()
    
 
-def calcium(year):
+def calcium(year, weekends=True):
     """Print out a [YYYYMMDD] calendar, no breaks between weeks/months"""
     tc = calendar.TextCalendar()
-    for month_index, month in enumerate(tc.yeardayscalendar(year, width=1), 1):
+    for month_index, month in enumerate(tc.yeardays2calendar(year, width=1), 1):
         for week in month[0]: # ?
-            for day in week:
+            for day, weekday in week:
                 if not day:
                     continue
-                print("[{year}{month:02}{day:02}]".format(year=year,
-                                                    month=month_index,
-                                                    day=day))
+                if not weekends and weekday in (WEEKEND):
+                    print()
+                    continue
+                print(f"[{year}{month_index:02}{day:02}]")
+
+
+def calzone(year):
+    """Prints YYYYMMDD calendar, like calcium without weekends"""
+    return calcium(year, weekends=False)
 
 
 if __name__ == "__main__":
@@ -50,7 +57,11 @@ if __name__ == "__main__":
     parser.add_argument('style', metavar='STYLE', help='calendar style')
     args = parser.parse_args()
 
-    if args.style == 'calcium':
-        calcium(args.year)
-    else:
-        calabazas(args.year) 
+    style = {'calcium': calcium,
+             'calabazas': calabazas,
+             'calzone': calzone,
+             }
+    try:
+        style[args.style](args.year)
+    except KeyError:
+        raise(f"Calendar style {args.style} not found")
