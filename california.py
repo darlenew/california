@@ -28,12 +28,29 @@ def calabazas(year):
                                       calendar.day_abbr[weekday]))
             if weekday == BREAK_AFTER_WEEKDAY:
                 print()
-    
+   
+
+def calcium(year):
+    """Print out a [YYYYMMDD] calendar, no breaks between weeks/months"""
+    tc = calendar.TextCalendar()
+    for month_index, month in enumerate(tc.yeardayscalendar(year, width=1), 1):
+        for week in month[0]: # ?
+            for day in week:
+                if not day:
+                    continue
+                print("[{year}{month:02}{day:02}]".format(year=year,
+                                                    month=month_index,
+                                                    day=day))
+
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="print out a calendar")
     parser.add_argument('year', metavar='YEAR', type=int, help='the calendar year')
+    parser.add_argument('style', metavar='STYLE', help='calendar style')
     args = parser.parse_args()
 
-    calabazas(args.year) 
+    if args.style == 'calcium':
+        calcium(args.year)
+    else:
+        calabazas(args.year) 
